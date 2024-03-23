@@ -14,20 +14,16 @@ namespace LeadFunnel.Repository
     public class TwilioRepository : ITwilioRepository
     {
         private AppDbContext appDbContext = new AppDbContext();
-        public async Task<bool> TriggerStudioFlow(RegisterViewModel registerViewModel, string FlowSid)
+        public async Task<bool> TriggerStudioFlow(RegisterViewModel registerViewModel, string flowSid)
         {
             try
             {
                 var cred = appDbContext.TwilioCredentials.FirstOrDefault();
-                var flow = appDbContext.TwilioStudioFlows.Where(x => x.FlowSID == FlowSid).FirstOrDefault();
 
                 // Twilio Credentials
                 string accountSid = cred.AccountId;
                 string apiKey = cred.ApiKey;
                 string apiSecret = cred.ApiSecret;
-
-                // Studio Flow SID
-                string flowSid = flow.FlowSID;
 
                 // Twilio API Base URL
                 string baseUrl = $"https://studio.twilio.com/v1/Flows/{flowSid}/Executions";

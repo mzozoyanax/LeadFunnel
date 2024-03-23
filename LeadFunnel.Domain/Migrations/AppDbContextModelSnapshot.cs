@@ -114,31 +114,6 @@ namespace LeadFunnel.Domain.Migrations
 
                     b.ToTable("TwilioCredentials");
                 });
-
-            modelBuilder.Entity("LeadFunnel.Domain.Models.TwilioStudioFlows", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FlowName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FlowSID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TwilioStudioFlows");
-                });
 #pragma warning restore 612, 618
         }
     }

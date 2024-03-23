@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeadFunnel.Domain.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240323210627_leadFunnelMigrate")]
+    [Migration("20240323220858_leadFunnelMigrate")]
     partial class leadFunnelMigrate
     {
         /// <inheritdoc />
@@ -116,31 +116,6 @@ namespace LeadFunnel.Domain.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TwilioCredentials");
-                });
-
-            modelBuilder.Entity("LeadFunnel.Domain.Models.TwilioStudioFlows", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FlowName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FlowSID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TwilioStudioFlows");
                 });
 #pragma warning restore 612, 618
         }

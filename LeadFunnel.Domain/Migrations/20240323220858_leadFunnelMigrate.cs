@@ -64,22 +64,6 @@ namespace LeadFunnel.Domain.Migrations
                 {
                     table.PrimaryKey("PK_TwilioCredentials", x => x.Id);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "TwilioStudioFlows",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FlowSID = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FlowName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TwilioStudioFlows", x => x.Id);
-                });
         }
 
         /// <inheritdoc />
@@ -93,9 +77,6 @@ namespace LeadFunnel.Domain.Migrations
 
             migrationBuilder.DropTable(
                 name: "TwilioCredentials");
-
-            migrationBuilder.DropTable(
-                name: "TwilioStudioFlows");
         }
     }
 }
