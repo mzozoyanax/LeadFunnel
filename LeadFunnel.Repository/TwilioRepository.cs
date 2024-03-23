@@ -8,12 +8,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace LeadFunnel.Repository
 {
     public class TwilioRepository : ITwilioRepository
     {
         private AppDbContext appDbContext = new AppDbContext();
+
         public async Task<bool> TriggerStudioFlow(RegisterViewModel registerViewModel, string flowSid)
         {
             try
