@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LeadFunnel.Domain\LeadFunnel.Domain.csproj" />
+    <ProjectReference Include="..\LeadFunnel.Interface\LeadFunnel.Interface.csproj" />
+    <ProjectReference Include="..\LeadFunnel.Repository\LeadFunnel.Repository.csproj" />
+  </ItemGroup>
+
+</Project>
