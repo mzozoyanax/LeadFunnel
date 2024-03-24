@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeadFunnel.Services", "..\L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeadFunnel.Api", "..\LeadFunnel.Api\LeadFunnel.Api.csproj", "{7DECC3D4-F3B1-4C2B-8BF4-60292149D1C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeadFunnel.Web", "..\LeadFunnel.Web\LeadFunnel.Web.csproj", "{D397A5CC-395C-4513-B121-368992146EE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{7DECC3D4-F3B1-4C2B-8BF4-60292149D1C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DECC3D4-F3B1-4C2B-8BF4-60292149D1C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DECC3D4-F3B1-4C2B-8BF4-60292149D1C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D397A5CC-395C-4513-B121-368992146EE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D397A5CC-395C-4513-B121-368992146EE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D397A5CC-395C-4513-B121-368992146EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D397A5CC-395C-4513-B121-368992146EE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

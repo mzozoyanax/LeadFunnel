@@ -22,7 +22,7 @@ namespace LeadFunnel.Domain
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=LeadFunnelDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+                optionsBuilder.UseSqlServer("workstation id=LeadFunnelDB.mssql.somee.com;packet size=4096;user id=Xhanti123_SQLLogin_1;pwd=skgctu7oo6;data source=LeadFunnelDB.mssql.somee.com;persist security info=False;initial catalog=LeadFunnelDB;TrustServerCertificate=True");
             }
         }
 
