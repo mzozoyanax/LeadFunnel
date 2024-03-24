@@ -23,8 +23,8 @@ namespace LeadFunnel.Api.Controllers
         }
 
         [HttpPost]
-        [Route("RegisterLead")]
-        public bool RegisterLead(RegisterViewModel registerViewModel)
+        [Route("RegisterContact")]
+        public bool Register(RegisterViewModel registerViewModel)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace LeadFunnel.Api.Controllers
                 _contacts.Add(contacts);
                 _survey.Add(survey);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -55,10 +55,17 @@ namespace LeadFunnel.Api.Controllers
         }
 
         [HttpPost]
-        [Route("NotifyLead")]
-        public async Task<bool> NotifyLead(RegisterViewModel registerViewModel, string flowSid)
+        [Route("NotifyContact")]
+        public async Task<bool> Notify(RegisterViewModel registerViewModel, string flowSid)
         {
             return await _twilioService.TriggerStudioFlow(registerViewModel, flowSid);
+        }
+
+        [HttpGet]
+        [Route("GetTextMessages")]
+        public List<MessageViewModel> GetTexts(string virtualPhoneNumber)
+        {
+            return _twilioService.TwilioTextMessages(virtualPhoneNumber);
         }
     }
 }

@@ -21,5 +21,10 @@ namespace LeadFunnel.Services
         {
             return _repository.TriggerStudioFlow(registerViewModel, FlowSid);
         }
+
+        public List<MessageViewModel> TwilioTextMessages(string virtualPhoneNumber)
+        {
+            return _repository.TwilioTextMessages(virtualPhoneNumber);  
+        }
     }
 }

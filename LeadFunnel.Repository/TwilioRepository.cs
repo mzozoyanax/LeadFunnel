@@ -55,5 +55,42 @@ namespace LeadFunnel.Repository
 
             return true;
         }
+
+        public List<MessageViewModel> TwilioTextMessages(string virtualPhoneNumber)
+        {
+            var cred = appDbContext.TwilioCredentials.FirstOrDefault();
+
+            // Twilio Credentials
+            string accountSid = cred.AccountId;
+            string apiSecret = cred.ApiSecret;
+
+            // Initialize Twilio client
+            TwilioClient.Init(accountSid, apiSecret);
+
+            // Your Twilio phone number
+            string twilioPhoneNumber = virtualPhoneNumber;
+
+            // Fetch all the messages received on your Twilio number
+            var messages = MessageResource.Read(
+                to: new PhoneNumber(twilioPhoneNumber)
+            );
+
+            List<MessageViewModel> messageViewModels = new List<MessageViewModel>();
+
+            foreach (var message in messages)
+            {
+                MessageViewModel messageView = new MessageViewModel()
+                {
+                    Sid = message.Sid.ToString(),
+                    From = message.From.ToString(),
+                    To = message.To.ToString(), 
+                    DateSent = message.DateSent,
+                };
+
+                messageViewModels.Add(messageView);
+            }
+
+            return messageViewModels;
+        }
     }
 }

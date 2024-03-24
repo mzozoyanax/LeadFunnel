@@ -12,5 +12,6 @@ namespace LeadFunnel.Interface.Services
     {
         Task<bool> TriggerStudioFlow(RegisterViewModel registerViewModel, string FlowSid);
 
+        List<MessageViewModel> TwilioTextMessages(string virtualPhoneNumber);
     }
 }
