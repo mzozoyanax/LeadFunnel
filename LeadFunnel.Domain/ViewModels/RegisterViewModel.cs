@@ -15,11 +15,5 @@ namespace LeadFunnel.Domain.ViewModels
         public string? Phone { get; set; }
 
         public string? Company { get; set; }
-
-        public string? ContactPreference { get; set; }
-
-        public string? ProjectInformation { get; set; }
-
-        public string? HowDidYouHearAboutUs { get; set; }
     }
 }

@@ -36,5 +36,9 @@ namespace LeadFunnel.Domain
         public DbSet<Survey> Survey { get; set; }
 
         public DbSet<TwilioCredential> TwilioCredentials { get; set; }
+
+        public DbSet<TwilioWorkflow> TwilioWorkflows { get; set; }    
+
+        public DbSet<TwilioWorkflowGroups> TwilioWorkflowGroups { get; set; }
     }
 }

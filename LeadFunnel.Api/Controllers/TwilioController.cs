@@ -12,18 +12,16 @@ namespace LeadFunnel.Api.Controllers
     public class TwilioController : ControllerBase
     {
         private readonly IEntityService<Contacts> _contacts;
-        private readonly IEntityService<Survey> _survey;
         private readonly ITwilioService _twilioService;
 
-        public TwilioController(IEntityService<Contacts> contacts, IEntityService<Survey> survey, ITwilioService twilioService)
+        public TwilioController(IEntityService<Contacts> contacts, ITwilioService twilioService)
         {
             _contacts = contacts;
-            _survey = survey;
             _twilioService = twilioService;
         }
 
         [HttpPost]
-        [Route("RegisterContact")]
+        [Route("RegisterContact")] //First time landing page sign up users will be saved in the database...
         public bool Register(RegisterViewModel registerViewModel)
         {
             try
@@ -36,15 +34,7 @@ namespace LeadFunnel.Api.Controllers
                     Company = registerViewModel.Company,
                 };
 
-                Survey survey = new Survey()
-                {
-                    ContactPreference = registerViewModel.ContactPreference,
-                    ProjectInformation = registerViewModel.ProjectInformation,
-                    HowDidYouHearAboutUs = registerViewModel.HowDidYouHearAboutUs,
-                };
-
                 _contacts.Add(contacts);
-                _survey.Add(survey);
             }
             catch (Exception)
             {
@@ -55,17 +45,34 @@ namespace LeadFunnel.Api.Controllers
         }
 
         [HttpPost]
-        [Route("NotifyContact")]
-        public async Task<bool> Notify(RegisterViewModel registerViewModel, string flowSid)
+        [Route("SendText")]
+        public bool SendTextMessage(MessageViewModel messageViewModel)
         {
+            return _twilioService.SendTextToIndividualContact(messageViewModel);
+        }
+
+        [HttpPost]
+        [Route("TriggerFlow")] //The user will get notification on their phone when done signing up....
+        public async Task<bool> TriggerFlow(RegisterViewModel registerViewModel, string flowSid)
+        {
+            //This method will trigger the Studio Flow that I created in Twilio...
             return await _twilioService.TriggerStudioFlow(registerViewModel, flowSid);
+        }
+
+
+        [HttpPost]
+        [Route("NotifyYourself")] //You will get notification on their phone when done signing up....
+        public bool NotifyYourself()
+        {
+            return _twilioService.ForwardTextMessages();
         }
 
         [HttpGet]
         [Route("GetTextMessages")]
-        public List<MessageViewModel> GetTexts(string virtualPhoneNumber)
+        public List<MessageViewModel> GetTexts()
         {
-            return _twilioService.TwilioTextMessages(virtualPhoneNumber);
+            //Get all text messages from Twilio....
+            return _twilioService.TwilioTextMessages();
         }
     }
 }

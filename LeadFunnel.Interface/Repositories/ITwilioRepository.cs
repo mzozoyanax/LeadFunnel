@@ -12,6 +12,18 @@ namespace LeadFunnel.Interface.Repositories
     {
         Task<bool> TriggerStudioFlow(RegisterViewModel registerViewModel, string FlowSid);
 
-        List<MessageViewModel> TwilioTextMessages(string virtualPhoneNumber);
+        List<MessageViewModel> TwilioTextMessages();
+
+        bool ForwardTextMessages();
+
+        bool SendTextToAllContact(MessageViewModel messageViewModel);
+
+        bool SendTextToIndividualContact(MessageViewModel messageViewModel);
+
+        bool RunWorkflow(int Id);
+
+        bool SendSimpleTextMessage(string Message);
+
+        bool ActiveReply();
     }
 }

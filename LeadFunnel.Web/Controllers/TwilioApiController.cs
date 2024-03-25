@@ -3,6 +3,7 @@ using LeadFunnel.Domain.ViewModels;
 using LeadFunnel.Interface.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace LeadFunnel.Web.Controllers
 {
@@ -11,19 +12,30 @@ namespace LeadFunnel.Web.Controllers
     public class TwilioApiController : ControllerBase
     {
         private readonly IEntityService<Contacts> _contacts;
-        private readonly IEntityService<Survey> _survey;
+        private readonly IEntityService<TwilioCredential> _credential;
         private readonly ITwilioService _twilioService;
 
-        public TwilioApiController(IEntityService<Contacts> contacts, IEntityService<Survey> survey, ITwilioService twilioService)
+        public TwilioApiController(IEntityService<Contacts> contacts, 
+            IEntityService<TwilioCredential> credential, 
+            ITwilioService twilioService
+            )
         {
             _contacts = contacts;
-            _survey = survey;
             _twilioService = twilioService;
+            _credential = credential;
+        }
+
+        [HttpGet]
+        [Route("GetTextMessagesFromLeads")]
+        public List<MessageViewModel> GetTextMessages()
+        {
+            //Get all text messages from Twilio....
+            return _twilioService.TwilioTextMessages();
         }
 
         [HttpPost]
-        [Route("RegisterContact")]
-        public bool Register(RegisterViewModel registerViewModel)
+        [Route("RegisterLead")] 
+        public bool RegisterLead(RegisterViewModel registerViewModel)
         {
             try
             {
@@ -35,15 +47,7 @@ namespace LeadFunnel.Web.Controllers
                     Company = registerViewModel.Company,
                 };
 
-                Survey survey = new Survey()
-                {
-                    ContactPreference = registerViewModel.ContactPreference,
-                    ProjectInformation = registerViewModel.ProjectInformation,
-                    HowDidYouHearAboutUs = registerViewModel.HowDidYouHearAboutUs,
-                };
-
                 _contacts.Add(contacts);
-                _survey.Add(survey);
             }
             catch (Exception)
             {
@@ -54,17 +58,31 @@ namespace LeadFunnel.Web.Controllers
         }
 
         [HttpPost]
-        [Route("NotifyContact")]
-        public async Task<bool> Notify(RegisterViewModel registerViewModel, string flowSid)
+        [Route("ForwardTextMessage")] 
+        public bool ForwardTextMessage()
         {
-            return await _twilioService.TriggerStudioFlow(registerViewModel, flowSid);
+            return _twilioService.ForwardTextMessages();
         }
 
-        [HttpGet]
-        [Route("GetTextMessages")]
-        public List<MessageViewModel> GetTexts(string virtualPhoneNumber)
+        [HttpPost]
+        [Route("SendGroupTextMessages")]
+        public bool SendGroupTextMessages(MessageViewModel messageViewModel)
         {
-            return _twilioService.TwilioTextMessages(virtualPhoneNumber);
+            return _twilioService.SendTextToAllContact(messageViewModel);
+        }
+
+        [HttpPost]
+        [Route("SendIndividualTextMessages")]
+        public bool SendIndividualTextMessages(MessageViewModel messageViewModel)
+        {
+            return _twilioService.SendTextToIndividualContact(messageViewModel);
+        }
+
+        [HttpPost]
+        [Route("ActivateWorkflow")]
+        public bool ActivateWorkflow(int GroupId)
+        {
+            return _twilioService.RunWorkflow(GroupId);
         }
     }
 }

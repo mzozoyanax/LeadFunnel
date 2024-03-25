@@ -10,43 +10,94 @@ using System.Text;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
+using Twilio.Rest.Studio.V2.Flow;
 using Twilio.Types;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace LeadFunnel.Repository
 {
     public class TwilioRepository : ITwilioRepository
     {
-        private AppDbContext appDbContext = new AppDbContext();
+        private readonly IEntityRepository<Contacts> _contacts;
+        private readonly IEntityRepository<TwilioCredential> _credentials;
+        private readonly IEntityRepository<TwilioWorkflow> _workflow;
+        private readonly IEntityRepository<TwilioWorkflowGroups> _workflowGroups;
+        private readonly TwilioRepository _twilioRepository;
 
-        public async Task<bool> TriggerStudioFlow(RegisterViewModel registerViewModel, string flowSid)
+        public TwilioRepository(IEntityRepository<TwilioCredential> credentials, IEntityRepository<Contacts> contacts)
+        {
+            _credentials = credentials;
+            _contacts = contacts;
+        }
+
+        public bool ForwardTextMessages()
         {
             try
             {
-                var cred = appDbContext.TwilioCredentials.FirstOrDefault();
+                var cred = _credentials.GetAll().FirstOrDefault();
 
                 // Twilio Credentials
                 string accountSid = cred.AccountId;
-                string apiKey = cred.ApiKey;
                 string apiSecret = cred.ApiSecret;
 
-                // Twilio API Base URL
-                string baseUrl = $"https://studio.twilio.com/v1/Flows/{flowSid}/Executions";
+                // Initialize Twilio client
+                TwilioClient.Init(accountSid, apiSecret);
 
-                // Data to send
-                var data = new FormUrlEncodedContent(new[]
+                // Your Twilio phone number and personal number
+                string twilioPhoneNumber = cred.VirtualPhone;
+                string personalNumber = cred.PersonalPhone;
+
+                // Fetch the latest incoming SMS message
+                var message = MessageResource.Read(
+                    to: new PhoneNumber(twilioPhoneNumber),
+                    limit: 1 // Limit to 1 message
+                ).FirstOrDefault(); // Get the first (latest) message or default to null
+
+                if (message != null)
                 {
-                    new KeyValuePair<string, string>("To", registerViewModel.Phone),
-                    new KeyValuePair<string, string>("From", cred.VirtualPhone)
-                });
+                    // Forward the latest SMS message to your personal number
+                    MessageResource.Create(
+                        body: message.Body,
+                        from: new PhoneNumber(twilioPhoneNumber),
+                        to: new PhoneNumber(personalNumber)
+                    );
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
 
-                // HTTP Request Headers
-                var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{apiKey}:{apiSecret}"));
-                var headers = new HttpClient();
-                headers.DefaultRequestHeaders.Add("Authorization", $"Basic {credentials}");
+            return true;    
+        }
 
-                // Send POST request to trigger the Studio Flow
-                var client = new HttpClient();
-                var response = await client.PostAsync(baseUrl, data);
+        public bool SendTextToAllContact(MessageViewModel messageViewModel)
+        {
+            try
+            {
+                var cred = _credentials.GetAll().FirstOrDefault();
+
+                var accountSid = cred.AccountId;
+                var authToken = cred.ApiSecret;
+
+                TwilioClient.Init(accountSid, authToken);
+
+                var query = _contacts.GetAll();
+
+                foreach (var item in query)
+                {
+                    var body = messageViewModel.Body.Replace("[name]", item.Name)
+                        .Replace("[company]", item.Company)
+                        .Replace("[phone]", item.Phone)
+                        .Replace("[email]", item.Email);
+
+                    var messageOptions = new CreateMessageOptions(
+                      new PhoneNumber(item.Phone));
+                    messageOptions.From = new PhoneNumber(cred.VirtualPhone);
+                    messageOptions.Body = body;
+
+                    var message = MessageResource.Create(messageOptions);
+                }
             }
             catch (Exception)
             {
@@ -56,41 +107,177 @@ namespace LeadFunnel.Repository
             return true;
         }
 
-        public List<MessageViewModel> TwilioTextMessages(string virtualPhoneNumber)
+        public bool SendTextToIndividualContact(MessageViewModel messageViewModel)
         {
-            var cred = appDbContext.TwilioCredentials.FirstOrDefault();
+            try
+            {
+                var cred = _credentials.GetAll().FirstOrDefault();
 
-            // Twilio Credentials
-            string accountSid = cred.AccountId;
-            string apiSecret = cred.ApiSecret;
+                var accountSid = cred.AccountId;
+                var authToken = cred.ApiSecret;
 
-            // Initialize Twilio client
-            TwilioClient.Init(accountSid, apiSecret);
+                TwilioClient.Init(accountSid, authToken);
 
-            // Your Twilio phone number
-            string twilioPhoneNumber = virtualPhoneNumber;
+                var messageOptions = new CreateMessageOptions(
+                  new PhoneNumber(messageViewModel.To));
+                messageOptions.From = new PhoneNumber(cred.VirtualPhone);
+                messageOptions.Body = messageViewModel.Body;
 
-            // Fetch all the messages received on your Twilio number
-            var messages = MessageResource.Read(
-                to: new PhoneNumber(twilioPhoneNumber)
-            );
+                var message = MessageResource.Create(messageOptions);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
 
+            return true;
+        }
+
+        public async Task<bool> TriggerStudioFlow(RegisterViewModel registerViewModel, string flowSid)
+        {
+            try
+            {
+                var cred = _credentials.GetAll().FirstOrDefault();
+
+                // Twilio Account SID and Auth Token
+                string accountSid = cred.AccountId;
+                string authToken = cred.ApiSecret;
+                string virtualPhone = cred.VirtualPhone;
+                string realPhone = cred.PersonalPhone;
+
+                TwilioClient.Init(accountSid, authToken);
+                
+                string studioFlowSid = flowSid;
+
+                var message = MessageResource.Create(
+                    to: new PhoneNumber(virtualPhone),
+                    from: new PhoneNumber(virtualPhone),
+                    body: "Hello from C#");
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public List<MessageViewModel> TwilioTextMessages()
+        {
             List<MessageViewModel> messageViewModels = new List<MessageViewModel>();
 
-            foreach (var message in messages)
+            try
             {
-                MessageViewModel messageView = new MessageViewModel()
-                {
-                    Sid = message.Sid.ToString(),
-                    From = message.From.ToString(),
-                    To = message.To.ToString(), 
-                    DateSent = message.DateSent,
-                };
+                var cred = _credentials.GetAll().FirstOrDefault();
 
-                messageViewModels.Add(messageView);
+                // Twilio Credentials
+                string accountSid = cred.AccountId;
+                string apiSecret = cred.ApiSecret;
+
+                // Initialize Twilio client
+                TwilioClient.Init(accountSid, apiSecret);
+
+                // Your Twilio phone number
+                string twilioPhoneNumber = cred.VirtualPhone;
+
+                // Fetch all the messages received on your Twilio number
+                var messages = MessageResource.Read(
+                    to: new PhoneNumber(twilioPhoneNumber)
+                );
+
+                foreach (var message in messages)
+                {
+                    MessageViewModel messageView = new MessageViewModel()
+                    {
+                        Sid = message.Sid.ToString(),
+                        From = message.From.ToString(),
+                        To = message.To.ToString(),
+                        Body = message.Body.ToString(),
+                        DateSent = message.DateSent,
+                    };
+
+                    messageViewModels.Add(messageView);
+                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
 
             return messageViewModels;
+        }
+
+
+        public bool ActiveReply()
+        {
+            var texts = _twilioRepository.TwilioTextMessages().FirstOrDefault();
+            var contact = _contacts.GetAll().LastOrDefault();
+
+            var result = (texts.From == contact.Phone);
+
+            return result;
+        }
+
+        public bool RunWorkflow(int Id)
+        {
+            try
+            {
+                var workflowGroups = _workflowGroups.GetAll().Where(x => x.GroupId == Id).FirstOrDefault();
+
+                if (workflowGroups != null)
+                {
+                    var workflow = _workflow.GetAll().Where(x => x.GroupId == workflowGroups.GroupId);
+
+                    foreach (var w in workflow)
+                    {
+                        var replied = ActiveReply();
+
+                        if (w.Reply == replied)
+                        {
+                            SendSimpleTextMessage(w.InitialMessage);
+                        }
+                        else
+                        {
+                            SendSimpleTextMessage(w.FollowupMessage);
+
+                            Thread.Sleep(w.Delay);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool SendSimpleTextMessage(string Message)
+        {
+            try
+            {
+                var contact = _contacts.GetAll().LastOrDefault();
+
+                MessageViewModel messageViewModel = new MessageViewModel()
+                {
+                    Sid = "",
+                    From = _credentials.GetAll().FirstOrDefault().VirtualPhone,
+                    To = "",
+                    Body = Message.Replace("[name]", contact.Name)
+                                .Replace("[company", contact.Company)
+                                .Replace("[phone]", contact.Phone)
+                                .Replace("[email]", contact.Email)
+                };
+
+                _twilioRepository.SendTextToAllContact(messageViewModel);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

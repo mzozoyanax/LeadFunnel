@@ -10,8 +10,6 @@ namespace LeadFunnel.Domain.Models
     {
         public string? AccountId { get; set; }  
 
-        public string? ApiKey { get; set; }
-
         public string? ApiSecret { get; set; }
 
         public string? VirtualPhone { get; set; }

@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeadFunnel.Repository", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeadFunnel.Services", "..\LeadFunnel.Services\LeadFunnel.Services.csproj", "{BE8623BC-BB7C-47C7-A760-142603772D43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeadFunnel.Api", "..\LeadFunnel.Api\LeadFunnel.Api.csproj", "{7DECC3D4-F3B1-4C2B-8BF4-60292149D1C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeadFunnel.Api", "..\LeadFunnel.Api\LeadFunnel.Api.csproj", "{7DECC3D4-F3B1-4C2B-8BF4-60292149D1C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeadFunnel.Web", "..\LeadFunnel.Web\LeadFunnel.Web.csproj", "{D397A5CC-395C-4513-B121-368992146EE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeadFunnel.Web", "..\LeadFunnel.Web\LeadFunnel.Web.csproj", "{D397A5CC-395C-4513-B121-368992146EE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,7 +1,36 @@
+using LeadFunnel.Domain;
+using LeadFunnel.Interface.Repositories;
+using LeadFunnel.Interface.Services;
+using LeadFunnel.Repository;
+using LeadFunnel.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Sql Dependency Injection
+var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(ConnectionString));
+
+//My dependencies injection.
+builder.Services.AddScoped(typeof(IEntityRepository<>), typeof(EntityRepository<>));
+builder.Services.AddScoped(typeof(IEntityService<>), typeof(EntityService<>));
+builder.Services.AddScoped<ITwilioRepository, TwilioRepository>();
+builder.Services.AddScoped<ITwilioService, TwilioService>();
+
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 var app = builder.Build();
 

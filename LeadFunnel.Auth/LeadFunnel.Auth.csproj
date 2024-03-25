@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-LeadFunnel.Auth-f40c084e-d038-4676-8b88-53c23a3573b3</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LeadFunnel.Domain\LeadFunnel.Domain.csproj" />
+    <ProjectReference Include="..\LeadFunnel.Interface\LeadFunnel.Interface.csproj" />
+    <ProjectReference Include="..\LeadFunnel.Repository\LeadFunnel.Repository.csproj" />
+    <ProjectReference Include="..\LeadFunnel.Services\LeadFunnel.Services.csproj" />
+  </ItemGroup>
+
+</Project>

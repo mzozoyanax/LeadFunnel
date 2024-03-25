@@ -29,14 +29,17 @@ namespace LeadFunnel.Repository
             _entities.Remove(entity);
             _appDbContext.SaveChanges();
         }
+
         public T Get(int Id)
         {
             return _entities.FirstOrDefault(c => c.Id == Id);
         }
+
         public List<T> GetAll()
         {
             return _entities.ToList();
         }
+
         public void Add(T entity)
         {
             if (entity == null)
@@ -46,10 +49,12 @@ namespace LeadFunnel.Repository
             _entities.Add(entity);
             _appDbContext.SaveChanges();
         }
+
         public void SaveChanges()
         {
             _appDbContext.SaveChanges();
         }
+
         public void Update(T entity)
         {
             if (entity == null)

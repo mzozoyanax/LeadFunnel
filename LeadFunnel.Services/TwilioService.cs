@@ -17,14 +17,45 @@ namespace LeadFunnel.Services
         {
             _repository = repository;
         }
+
+        public bool ActiveReply()
+        {
+            return _repository.ActiveReply();
+        }
+
+        public bool ForwardTextMessages()
+        {
+            return _repository.ForwardTextMessages();   
+        }
+
+        public bool RunWorkflow(int Id)
+        {
+            return _repository.RunWorkflow(Id);
+        }
+
+        public bool SendSimpleTextMessage(string Message)
+        {
+            return _repository.SendSimpleTextMessage(Message);
+        }
+
+        public bool SendTextToAllContact(MessageViewModel messageViewModel)
+        {
+            return _repository.SendTextToAllContact(messageViewModel);
+        }
+
+        public bool SendTextToIndividualContact(MessageViewModel messageViewModel)
+        {
+            return _repository.SendTextToIndividualContact(messageViewModel);
+        }
+
         public Task<bool> TriggerStudioFlow(RegisterViewModel registerViewModel, string FlowSid)
         {
             return _repository.TriggerStudioFlow(registerViewModel, FlowSid);
         }
 
-        public List<MessageViewModel> TwilioTextMessages(string virtualPhoneNumber)
+        public List<MessageViewModel> TwilioTextMessages()
         {
-            return _repository.TwilioTextMessages(virtualPhoneNumber);  
+            return _repository.TwilioTextMessages();  
         }
     }
 }
